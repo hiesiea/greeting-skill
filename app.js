@@ -3,7 +3,10 @@
 const Alexa = require('alexa-sdk');
 const bodyParser = require('body-parser');
 const express = require('express');
+const ngrok = require('ngrok');
 const app = express();
+
+const PORT = 3000;
 
 app.use(bodyParser.urlencoded({
     extended: true
@@ -33,6 +36,16 @@ app.post('/greeting', (req, res) => {
     alexa.execute();
 });
 
-app.listen(3000, () => {
-    console.log('Example app listening on port 3000!');
+app.listen(PORT, () => {
+    console.log('Example app listening on port ' + PORT + '!');
 });
+
+connectNgrok(PORT).then(url => {
+    console.log('Endpoint Default : ' + url + '/greeting');
+});
+
+// ngrokを非同期で起動
+async function connectNgrok(port) {
+    let url = await ngrok.connect(PORT);
+    return url;
+}
